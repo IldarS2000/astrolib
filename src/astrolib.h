@@ -3,13 +3,9 @@
 
 #include "star.h"
 
-namespace astrolib {
+double CelsiusToKelvin(double celsiusTemperature);
+double KelvinToCelsius(double kelvinTemperature);
 
-    double CelsiusToKelvin(double celsiusTemperature);
-    double KelvinToCelsius(double kelvinTemperature);
-
-    double Illumination(double lightFlow, double illuminatedSurfaceArea);
-
-} // namespace astrolib
+double Illumination(double lightFlow, double illuminatedSurfaceArea);
 
 #endif // ASTROLIB_H
