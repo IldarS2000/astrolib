@@ -15,3 +15,4 @@ target_link_libraries(${PROJECT_NAME} gtest gtest_main)
 
 # declarations for test
 target_include_directories(${PROJECT_NAME} PRIVATE ${ASTROLIB_SRC_PATH})
+target_include_directories(${PROJECT_NAME} PRIVATE ${ASTROLIB_SRC_PATH}/include)

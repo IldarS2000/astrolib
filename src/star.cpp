@@ -1,7 +1,7 @@
 #include <string>
 #include <cmath>
-#include "star.h"
-#include "constants.h"
+#include "include/star.h"
+#include "include/constants.h"
 
 Star::Star()  = default;
 Star::~Star() = default;
@@ -266,39 +266,39 @@ int Star::luminosityClass(const std::string& spectrum)
 
     if (spectrum.compare(i, 3, "VII", 3) == 0) {
         lumclass = LumClass::VII;
-    }
-    else if (spectrum.compare(i, 2, "VI", 2) == 0) {
+    } else if (spectrum.compare(i, 2, "VI", 2) == 0) {
         lumclass = LumClass::VI;
-    }
-    else if (spectrum.compare(i, 1, "V", 1) == 0) {
+    } else if (spectrum.compare(i, 1, "V", 1) == 0) {
         lumclass = LumClass::V;
     }
 
-    else if (spectrum.compare(i, 3, "Iab", 3) == 0)
+    else if (spectrum.compare(i, 3, "Iab", 3) == 0) {
         lumclass = LumClass::Iab;
-    else if (spectrum.compare(i, 3, "IAB", 3) == 0)
+    } else if (spectrum.compare(i, 3, "IAB", 3) == 0) {
         lumclass = LumClass::Iab;
-    else if (spectrum.compare(i, 3, "Ia0", 3) == 0)
+    } else if (spectrum.compare(i, 3, "Ia0", 3) == 0) {
         lumclass = LumClass::Ia0;
-    else if (spectrum.compare(i, 3, "IA0", 3) == 0)
+    } else if (spectrum.compare(i, 3, "IA0", 3) == 0) {
         lumclass = LumClass::Ia0;
-    else if (spectrum.compare(i, 3, "IA+", 3) == 0)
+    } else if (spectrum.compare(i, 3, "IA+", 3) == 0) {
         lumclass = LumClass::Ia0;
-    else if (spectrum.compare(i, 2, "Ia", 2) == 0)
+    } else if (spectrum.compare(i, 2, "Ia", 2) == 0) {
         lumclass = LumClass::Ia;
-    else if (spectrum.compare(i, 2, "IA", 2) == 0)
+    } else if (spectrum.compare(i, 2, "IA", 2) == 0) {
         lumclass = LumClass::Ia;
-    else if (spectrum.compare(i, 2, "Ib", 2) == 0)
+    } else if (spectrum.compare(i, 2, "Ib", 2) == 0) {
         lumclass = LumClass::Ib;
-    else if (spectrum.compare(i, 2, "IB", 2) == 0)
+    } else if (spectrum.compare(i, 2, "IB", 2) == 0) {
         lumclass = LumClass::Ib;
+    }
 
-    else if (spectrum.compare(i, 3, "III", 3) == 0)
+    else if (spectrum.compare(i, 3, "III", 3) == 0) {
         lumclass = LumClass::III;
-    else if (spectrum.compare(i, 2, "II", 2) == 0)
+    } else if (spectrum.compare(i, 2, "II", 2) == 0) {
         lumclass = LumClass::II;
-    else if (spectrum.compare(i, 2, "IV", 2) == 0)
+    } else if (spectrum.compare(i, 2, "IV", 2) == 0) {
         lumclass = LumClass::IV;
+    }
 
     return lumclass;
 }
@@ -318,93 +318,47 @@ std::string Star::formatSpectrum(int spectype, int lumclass)
     std::string spectrum;
     static char types[14] = {'W', 'O', 'B', 'A', 'F', 'G', 'K', 'M', 'L', 'T', 'C', 'R', 'N', 'S'};
 
-    if (lumclass == LumClass::VII)
+    if (lumclass == LumClass::VII) {
         spectrum.append(1, 'D');
+    }
 
     if (spectype > SpecType::W0 && spectype < SpecType::T0 + 9) {
         spectrum.append(1, types[spectype / 10]);
         spectrum.append(1, '0' + spectype % 10);
     }
 
-    if (lumclass == LumClass::Ia0)
+    if (lumclass == LumClass::Ia0) {
         spectrum.append("Ia0");
-    else if (lumclass == LumClass::Ia)
+    } else if (lumclass == LumClass::Ia) {
         spectrum.append("Ia");
-    else if (lumclass == LumClass::Iab)
+    } else if (lumclass == LumClass::Iab) {
         spectrum.append("Iab");
-    else if (lumclass == LumClass::Ib)
+    } else if (lumclass == LumClass::Ib) {
         spectrum.append("Ib");
-    else if (lumclass == LumClass::II)
+    } else if (lumclass == LumClass::II) {
         spectrum.append("II");
-    else if (lumclass == LumClass::III)
+    } else if (lumclass == LumClass::III) {
         spectrum.append("III");
-    else if (lumclass == LumClass::IV)
+    } else if (lumclass == LumClass::IV) {
         spectrum.append("IV");
-    else if (lumclass == LumClass::V)
+    } else if (lumclass == LumClass::V) {
         spectrum.append("V");
-    else if (lumclass == LumClass::VI)
+    } else if (lumclass == LumClass::VI) {
         spectrum.append("VI");
+    }
 
     return spectrum;
 }
 
-// Returns estimate of star distance based on absolute magnitude derived from spectral class,
-// and star's apparent visual and blue magnitudes. Distance estimate is returned in parsecs
-// and will be INFINITY if not determined.
-double Star::spectralDistance(const std::string& spectrum, double vmag, double bmag)
-{
-    if (std::isinf(vmag) && std::isinf(bmag))
-        return INFINITY;
-
-    int spectype = 0, lumclass = 0;
-    parseSpectrum(spectrum, spectype, lumclass);
-    if (spectype == 0)
-        return INFINITY;
-
-    // If luminosity class is not present, we'll guess that "early" spectral types are main-sequence,
-    // and "late" types are giants. Late main-sequence stars are intrinsically faint, and (probably)
-    // nearby enough to have their distances already known from trigonometric parallax.
-
-    if (lumclass == 0)
-        lumclass = spectype < SpecType::A0 ? LumClass::V : LumClass::III;
-
-    // Get spectral class info. If visual magnitude is not available,
-    // compute it from blue magnitude and expected color index.
-
-    SpecInfo info = spectralClassInfo(spectype, lumclass);
-    if (info.Mv < INFINITY) {
-        if (std::isinf(vmag))
-            vmag = bmag - info.BV;
-
-        // Compute distance from difference between apparent and absolute visual magnitude.
-        // If farther than 100 parsecs, estimate insterstellar dust absorption and recompute.
-
-        double d = distanceFromMagnitude(vmag, info.Mv);
-        if (d > 100.0) {
-            // If both visual and blue magnitudes are available, compute B-V color
-            // excess and estimate absoption as 3 x excess. This can never be negative!
-            // Then recompute distance in parsecs, including absorption.
-
-            double a = bmag < INFINITY ? (bmag - vmag) - info.BV : 0.0;
-            a        = a < 0.0 ? 0.0 : 3.0 * a;
-            d        = distanceFromMagnitude(vmag - a, info.Mv);
-        }
-
-        return d;
-    }
-
-    return INFINITY;
-}
-
 // Returns star's total luminosity from absolute visual magnitude (mv)
-// and bolometric correction (bc); assumes Sun's absolute bolometric magnitude is 4.72.
+// and bolometric correction (bc); assumes Sun's absolute bolometric magnitude is 4.72
 double Star::luminosity(double mv, double bc)
 {
     return brightnessRatio(4.725 - mv - bc);
 }
 
 // Returns star's radius in solar radii from its total bolometric luminosity (lum)
-// and effective surface temperature in Kelvins (temp).
+// and effective surface temperature in Kelvins (temp)
 double Star::radius(double lum, double temp)
 {
     temp = 5770.0 / temp;

@@ -10,6 +10,12 @@ private:
     double _radius{};
     double _photosphereTemperature{};
 
+    double _parallax{}; // heliocentric parallax in arcseconds (i.e. reciprocal of distance in parsecs), zero if unknown
+    double _radvel{};   // radial velocity as fraction of light speed (i.e. light years per year), infinite if unknown
+    double _Vmagnitude{};    // visual magnitude at J2000
+    double _Bmagnitude{};    // blue magnitude at J2000
+    std::string _spectrum{}; // Spectral type string
+
 public:
     Star();
     virtual ~Star();
@@ -69,28 +75,12 @@ public:
         VII = 10 // white dwarfs, D
     };
 
-    // Information about a particular stellar spectral class. Values are INFINITY if unknown
-    struct SpecInfo {
-        std::string spec; // MK spectral type and luminosity class
-        double Teff;       // Stellar surface effective temperature, Kelvins
-        double BCv;        // Bolometric correction to visual (V) magnitude
-        double logL;       // log10 of bolometric luminosity
-        double Rsun;       // _radius in solar radii
-        double Mv;         // absolute visual (V) magnitude
-        double BV;         // color index (B-V)
-        double Msun;       // _mass in solar masses
-    };
-
     static int spectralType(const std::string& spectrum);
     static int luminosityClass(const std::string& spectrum);
-    static int spectralType(double temp);
-    static int luminosityClass(int spectype, double mv);
     static bool parseSpectrum(const std::string& spectrum, int& spectype, int& lumclass);
     static std::string formatSpectrum(int spectype, int lumclass);
     static double bolometricCorrection(double temp);
     static double colorTemperature(double bmv, int lumClass);
-    static SpecInfo spectralClassInfo(int spectype, int lumclass);
-    static double spectralDistance(const std::string& spectrum, double vmag, double bmag);
     static double luminosity(double mv, double bc);
     static double radius(double lum, double temp);
 };
