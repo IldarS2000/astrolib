@@ -38,7 +38,6 @@ double Star::Luminosity() const
            std::pow(this->_photosphereTemperature, 4);
 }
 
-// Converts B-V color index (bv) to RGB color
 void Star::bmv2rgb(double bv, double& r, double& g, double& b)
 {
     double t = r = g = b = 0.0;
@@ -91,13 +90,11 @@ void Star::bmv2rgb(double bv, double& r, double& g, double& b)
     }
 }
 
-// Converts B-V color index (bv) to temperature in Kelvin
 double Star::bmv2temp(double bv)
 {
     return 4600.0 * ((1.0 / ((0.92 * bv) + 1.7)) + (1.0 / ((0.92 * bv) + 0.62)));
 }
 
-// Converts B-V index to stellar surface effective temperature in Kelvins
 double Star::colorTemperature(double bv, int lumClass)
 {
     double t = 0.0;
@@ -116,7 +113,6 @@ double Star::colorTemperature(double bv, int lumClass)
     return pow(10.0, t);
 }
 
-// Converts stellar effective surface temperature in Kelvins to bolometric correction in magnitudes.
 double Star::bolometricCorrection(double t)
 {
     double bc = INFINITY;
@@ -137,7 +133,6 @@ double Star::bolometricCorrection(double t)
     return bc;
 }
 
-// Returns a star's absolute magnitude, given its apparent magnitude and distance in parsecs
 double Star::absoluteMagnitude(double appMag, double dist)
 {
     if (dist > 0.0 && dist < INFINITY) {
@@ -147,7 +142,6 @@ double Star::absoluteMagnitude(double appMag, double dist)
     }
 }
 
-// Returns a star's apparent magnitude, given its absolute magnitude and distance in parsecs
 double Star::apparentMagnitude(double absMag, double dist)
 {
     if (dist > 0.0 && dist < INFINITY) {
@@ -157,13 +151,11 @@ double Star::apparentMagnitude(double absMag, double dist)
     }
 }
 
-// Returns a star's distance in parsecs from the difference between its apparent and absolute magnitudes
 double Star::distanceFromMagnitude(double appMag, double absMag)
 {
     return pow(10.0, (appMag - absMag) / 5.0 + 1.0);
 }
 
-// Returns the brightness ratio that corresponds to the magnitude difference between two stars
 double Star::brightnessRatio(double magDiff)
 {
     if (std::isinf(magDiff)) {
@@ -173,13 +165,11 @@ double Star::brightnessRatio(double magDiff)
     }
 }
 
-// Given the brightness ratio between two objects, returns their difference in magnitudes
 double Star::magnitudeDifference(double ratio)
 {
     return -2.5 * log10(ratio);
 }
 
-// Returns the combined magnitude of two stars with individual magnitudes
 double Star::magnitudeSum(double mag1, double mag2)
 {
     if (std::isinf(mag2)) {
@@ -191,19 +181,16 @@ double Star::magnitudeSum(double mag1, double mag2)
     }
 }
 
-// A Moffat function describes a stellar image profile on a CCD image
 double Star::moffatFunction(double max, double r2, double beta)
 {
     return max / pow(1.0 + r2, beta);
 }
 
-// Computes radius in pixels from center of Moffat-function star image profile where intensity equals a given value (z)
 double Star::moffatRadius(double z, double max, double beta)
 {
     return sqrt(pow(max / z, 1.0 / beta) - 1.0);
 }
 
-// Given a stellar spectral class string, returns integer code for spectral type
 int Star::spectralType(const std::string& spectrum)
 {
     int spectype          = 0;
@@ -226,7 +213,6 @@ int Star::spectralType(const std::string& spectrum)
     return 0;
 }
 
-// Given a stellar spectral class string, returns integer code for luminosity class
 int Star::luminosityClass(const std::string& spectrum)
 {
     int i        = 0;
@@ -303,7 +289,6 @@ int Star::luminosityClass(const std::string& spectrum)
     return lumclass;
 }
 
-// Given a stellar spectral class string, parses integer code for spectral type and luminosity class
 bool Star::parseSpectrum(const std::string& spectrum, int& spectype, int& lumclass)
 {
     spectype = spectralType(spectrum);
@@ -311,8 +296,6 @@ bool Star::parseSpectrum(const std::string& spectrum, int& spectype, int& lumcla
     return spectype || lumclass;
 }
 
-// Given an integer spectral type and luminosity class code,
-// formats and returns equivalent spectral class string
 std::string Star::formatSpectrum(int spectype, int lumclass)
 {
     std::string spectrum;
@@ -350,15 +333,11 @@ std::string Star::formatSpectrum(int spectype, int lumclass)
     return spectrum;
 }
 
-// Returns star's total luminosity from absolute visual magnitude (mv)
-// and bolometric correction (bc); assumes Sun's absolute bolometric magnitude is 4.72
 double Star::luminosity(double mv, double bc)
 {
     return brightnessRatio(4.725 - mv - bc);
 }
 
-// Returns star's radius in solar radii from its total bolometric luminosity (lum)
-// and effective surface temperature in Kelvins (temp)
 double Star::radius(double lum, double temp)
 {
     temp = 5770.0 / temp;
